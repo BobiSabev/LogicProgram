@@ -10,21 +10,18 @@ Implement the grammar for propositional logic with all non terminals as objects
 
 
 Formula - 
-    generate truth table
-    prove theorem
-    semantic tableux
-    SAT solver   
 
-Parser
+    generate truth table - put it into a class
+    prove theorem - for a set of formulas, if all of them are true, then the theorem is true
+                    set of formulas  O   theorem, use sematic tableux to close all branches
+    
+    
+    semantic tableux
+    SAT solver - given a list of formulas find all possible combinations of atomic propositions that satisfy them 
+
+Parser - fix the parser, some problems with recursion
 
 CLI
-
-Logical_Expression - abstact base class
-    eval
-    toString
-    generate truth table
-    
-    
 
 """
 
@@ -44,6 +41,14 @@ es = [Equivalence(Implication(Negation(Atom("A")), Atom("B")),Implication(Atom("
 for e in es:
     print(e.toString())
     print(e.evaluate({'A':True,'B':False}))
+    
+    
+    
+left = [Negation(Atom("A"))]
+right = [Negation(Atom("B"))]
+    
+st =  SemanticTableaux(left, right)
+st.expand()
     
     
     

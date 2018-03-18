@@ -292,7 +292,179 @@ class Parser:
             return self.parseFormula(exp[0])
         
         return None
+    
+from enum import Enum
+
+class Branch(Enum):
+    TO_EXPAND = 1
+    OPEN = 2
+    CLOSED = 3  
+
+class SemanticTableaux:
+    """
+    A class for managing a semantic tebleaux of a set of formulas
+    
+    left and right are lists of valid expression
+    on the left are meant to be true
+    on the right are meant to be false
+    branches are either open or closed
+    
+    putting set of formulas on the left and a theorem on the right and
+    closing all branches proves the theorem holds
+    """
+    
+    def __init__(self, left, right):
+        self.left = [left]
+        self.right = [right]
+        self.branches = [Branch.TO_EXPAND]
+
+    """
+        Reduction rules, 5 operator x 2 sides = 10 functions 
+    """
+    
+    def expand(self):
         
+        while not self.isComplete():
+            i_to_expand = [i for i, branch in enumerate(self.branches) if self.branchCanBeExpanded(i)]
+            while self.branchCanBeExpanded(i_to_expand[0]):
+                # apply reduction rules
+                print(self.toString())
+                self.notLeft(i_to_expand[0])
+                print(self.toString())
+                self.notRight(i_to_expand[0])
+        
+        
+        pass
+    
+    'takes a list of expressions and returns their types as strings'
+    def getTypes(exps):
+        return [type(e).__name__ for e in exps]
+    
+    'put the statement on the right, removing the negation'
+    def notLeft(self, index):
+        types = SemanticTableaux.getTypes(self.left[index])
+        if 'Negation' not in types:
+            return False # there is no negation so return that it is unsuccesful
+        f = self.left[index][types.index('Negation')] # get the formula
+        # add the argument of f to the right side
+        self.right[index].append(f.getArg())
+        self.left[index].remove(f)
+        return True
+    
+    'put the statement on the left, removing the negation'
+    def notRight(self, index):
+        pass
+    
+    'Split the disjunction into 2 branches'
+    def disjLeft(self, index):
+        pass
+    
+    'Split the disjunction into 2 parts'
+    def disjRight(self, index):
+        pass
+    
+    'Split the conjunction to its arguments'
+    def conjLeft(self, index):
+        pass
+    
+    'Split the arguments into 2 branches'
+    def conjRight(self, index):
+        pass
+    
+    
+    'Split to 2 branches, either arg1 on the right, or arg2 on the left'
+    def impLeft(self, index):
+        pass
+    
+    'Put arg1 to the left, keep arg2 on the right'
+    def impRight(self, index):
+        pass
+    
+    
+    'Split into 2 branches, keeping the arguments on the same side'
+    def equivLeft(self, index):
+        pass
+    
+    'Split into 2 branches, keeping the arguments on a different side'
+    def equivRight(self, index):
+        pass
+    
+    
+    'A branch is closed if the same formula occurs on the left and on the right.'
+    def branchIsClosed(self, index):
+        if(index >= 0 and index < len(self.branches)):
+            l = self.left[index]
+            r = self.right[index]
+            for f_l in l:
+                for f_r in r:
+                    if f_l.toString() == f_r.toString():
+                        self.branches[index] = Branch.CLOSED
+                        return True
+        return False
+    
+    'A branch is open if there are no more logical operators and the branch is not closed.'
+    def branchIsOpen(self, index):
+        # If not valid index
+        if(index < 0 or index >= len(self.branches)):
+            return False
+        
+        # If closed
+        if self.branchIsClosed(index):
+            return False
+        
+        # If there is a non-atomic formula
+        for l,r in zip(self.left[index], self.right[index]):
+            if not Atom.isAtomic(l) or not Atom.isAtomic(r):
+                return False
+        
+        self.branches[index] = Branch.OPEN
+        return True
+        
+    
+    'If a branch is not closed or open, then it can be expanded'
+    def branchCanBeExpanded(self, index):
+        return not(self.branchIsClosed(index) or self.branchIsOpen(index)) 
+    
+    'A tableau is called complete if for all branches is false that they CanBeExpanded'
+    def isComplete(self):
+        for i, branch in enumerate(self.branches):
+            if self.branchCanBeExpanded(i):
+                return False
+        return True
+    
+    'A tableau is called closed if it is complete and each branch is closed.'
+    def isClosed(self):
+        if not self.isComplete():
+            return False
+        for i, branch in enumerate(self.branches):
+            if not self.branchIsClosed(i):
+                return False
+        return True
+    
+    'A tableau is called open if it is complete and there is at least one open branch.'
+    def isOpen(self):
+        if not self.isComplete():
+            return False
+        for i, branch in enumerate(self.branches):
+            if self.branchIsOpen(i):
+                return True
+        return False
+    
+    
+    def toString(self):
+        s = ''
+        for formulas_left, formulas_right in zip(self.left, self.right):
+            for l in formulas_left:
+                s += l.toString() + (", " if not l == formulas_left[-1] else "")
+            s += '\t 0 \t'
+            for r in formulas_right:
+                s += r.toString() + (", " if not r == formulas_right[-1] else "")
+            s += "\t\t"
+        return s
+                
+
+
+
         
             
 """
@@ -327,12 +499,12 @@ def order(exps):
     exp_and_str.sort(key=lambda tup: len(tup[0])) 
     return exp_and_str    
     
-
+"""
 x = unlist(es[0])
 print(x)
 x_o = order(x)
 print(x_o)
-
+"""
 
 def build_dicts(exps):
     # Extract all atomic expression
@@ -350,7 +522,7 @@ def build_dicts(exps):
     # and the value is all possible truth table combinations
     return dicts
 
-
+"""
 dicts = build_dicts(x_o)
 
 
@@ -365,7 +537,7 @@ for d in dicts:
             
         
         
-        
+"""        
         
         
         
