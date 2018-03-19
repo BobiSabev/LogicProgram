@@ -6,24 +6,20 @@ Created on Fri Mar 16 23:58:07 2018
 """
 
 """
+Grammar:
+    - possibly extend to Predicate logic
 
-
-Symbol - probabily shouln't know about its subclasses
-
-
-Formula - 
-
-    generate truth table - put it into a class
-    prove theorem - for a set of formulas, if all of them are true, then the theorem is true
-                    set of formulas  O   theorem, use sematic tableux to close all branches
+Tools:
+    Parser - fix the parser, some problems with recursion
+    SemanticTableux - finish the reduction rules and update for the grammar changes
+    Truth tables - collect the functions into a class
     
+CLI:
+    - make a user interface offering interaction with the program
     
-    semantic tableux
-    SAT solver - given a list of formulas find all possible combinations of atomic propositions that satisfy them 
-
-Parser - fix the parser, some problems with recursion
-
-CLI
+    write forumlas (and rememeber them) - use Parser   
+    prove theorem - use the SemanticTableux
+    SAT solver - use the SemanticTableux or the truth table
 
 """
 
