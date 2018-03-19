@@ -6,7 +6,9 @@ Created on Fri Mar 16 23:58:07 2018
 """
 
 """
-Implement the grammar for propositional logic with all non terminals as objects
+
+
+Symbol - probabily shouln't know about its subclasses
 
 
 Formula - 
@@ -28,7 +30,6 @@ CLI
 from pyparsing import nestedExpr
  
 from grammar import *
-from grammar import Value
 
 
 
@@ -42,16 +43,18 @@ for e in es:
     print(e.toString())
     print(e.evaluate({'A':True,'B':False}))
     
+
+#left = [Negation(Atom("A"))]
+#right = [Negation(Atom("B"))]   
+"""  
+left = [Disjunction(Atom("A"), Atom("B"))]
+right = [Disjunction(Atom("A"), Atom("B"))]
+    
+st2 =  SemanticTableaux(left, right)
+st2.expand()
     
     
-left = [Negation(Atom("A"))]
-right = [Negation(Atom("B"))]
-    
-st =  SemanticTableaux(left, right)
-st.expand()
-    
-    
-    
+""" 
 
 
 
